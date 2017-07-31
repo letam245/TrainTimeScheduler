@@ -2,8 +2,8 @@ $(document).ready(function () {
 //=========================================================//
 // restric user input to number only for frequency input
 //=========================================================//
-	displayTime()
-  //called when key is pressed in textbox
+
+  //allow only number input
   $("#frequency").keypress(function (e) {
      //if the letter is not digit then display error and don't type anything
      if (e.which != 8 && e.which != 0 && (e.which < 48 || e.which > 57)) {
@@ -12,7 +12,19 @@ $(document).ready(function () {
                return false;
     }
    });
-  });
+
+
+//display real time clock
+function displayTime() {
+    var time = moment().format('hh:mm A');
+    $('#current-time').html('Current time is: '+ time);
+    setInterval(displayTime, 1000);
+}
+//display real time clock
+displayTime();
+
+});
+
 
 // Initialize Firebase
 var config = {
@@ -127,10 +139,5 @@ database.ref().on('child_added', function(childSnapshot){
 		console.log('the value failed: ' + errorObject.code);
 });
 
-function displayTime() {
-    var time = moment().format('hh:mm A');
-    $('#current-time').html('Current time is: '+ time);
-    setInterval(displayTime, 1000);
-}
 
 
