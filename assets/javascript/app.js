@@ -18,7 +18,44 @@ $(document).ready(function () {
 function displayTime() {
     var time = moment().format('hh:mm A');
     $('#current-time').html('Current time is: '+ time);
-    setInterval(displayTime, 1000);
+    database.ref().once('value').then(function(snapshot){
+    	$('#train-table > tbody').html('')
+    	snapshot.forEach(function(childSnapshot) {
+    		var key = childSnapshot.key;
+    		var childData = childSnapshot.val();
+    		console.log(childData);
+
+			var tName = childData.name;
+			var tDestination = childData.destination;
+			var tFrequency = childData.frequency;
+			var tFirstTrain = childData.firstTrain;
+
+			var diffTime = moment().diff(moment.unix(tFirstTrain), 'minutes');
+			var tRemainder = moment().diff(moment.unix(tFirstTrain), 'minutes') % tFrequency;
+			var tMinutes = tFrequency - tRemainder;
+
+			var tArrival = moment().add(tMinutes, 'm').format('hh:mm')
+
+	
+			console.log("diffTime: " + diffTime);
+			console.log("tFirstTrain: " + tFirstTrain);
+			console.log("tRemainder: " + tRemainder);
+			console.log("tMinute: " + tMinutes);
+			console.log("tArrival: " + tArrival);
+
+
+			$('#train-table > tbody').append(
+			'<tr><td>' + tName.toUpperCase() + 
+			'</td><td>' + tDestination.toUpperCase() + 
+			'</td><td>' + tFrequency+ 
+			'</td><td>' + tArrival + 
+			'</td><td>' + tMinutes + '</td></tr>' 
+			)
+    	});
+    	
+
+    })
+    setInterval(displayTime, 60*1000);
 }
 //display real time clock
 displayTime();
